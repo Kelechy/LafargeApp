@@ -1,0 +1,42 @@
+﻿@page "/location/{AssetId:decimal}"
+@* @page "/location/{DriverId:decimal}" *@
+@inject ILocationService LocationService
+
+
+<PageTitle>View Location</PageTitle>
+<h3>View Location</h3>
+<div>
+    <p>CreatedAt: @loc.CreatedAt</p>
+    <p>UpdatedAt: @loc.UpdatedAt</p>
+    <p>AgeOfReadingSeconds: @loc.AgeOfReadingSeconds</p>
+    <p>AssetId: @loc.AssetId</p>
+    <p>AltitudeMetres: @loc.AltitudeMetres</p>
+    <p>DriverId: @loc.DriverId</p>
+    <p>Heading: @loc.Heading</p>
+    <p>Latitude: @loc.Latitude</p>
+    <p>IsAvl: @loc.IsAvl</p>
+    <p>OdometerKilometres: @loc.OdometerKilometres</p>
+    <p>Longitude: @loc.Latitude</p>
+    <p>Hdop: @loc.Hdop</p>
+    <p>PositionId: @loc.PositionId</p>
+    <p>Pdop: @loc.Pdop</p>
+    <p>TimeStamp: @loc.TimeStamp</p>
+    <p>Source: @loc.Source</p>
+    <p>SpeedKilometresPerHour: @loc.SpeedKilometresPerHour</p>
+    <p>SpeedLimit: @loc.SpeedLimit</p>
+    <p>Vdop: @loc.Vdop</p>
+</div>
+
+@code {
+    [Parameter]
+    public decimal? AssetId { get; set; }
+    LafargeApp.Shared.Location loc = new LafargeApp.Shared.Location();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if(AssetId.HasValue)
+        {
+           loc = await LocationService.GetLocationByAssetId((decimal)AssetId); 
+        }
+    }
+}

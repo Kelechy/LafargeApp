@@ -1,0 +1,71 @@
+﻿@page "/trucks"
+@inject ITruckService TruckService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Trucks</PageTitle>
+
+<h3>Trucks</h3>
+
+@if (TruckService.Trucks == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>CreatedAt</th>
+                <th>UpdatedAt</th>
+                <th>SiteId</th>
+                <th>AssetId</th>
+                <th>LastPositionTimestamp</th>
+                <th>Latitude</th>
+                <th>Longitute</th>
+                <th>CurrentAddress</th>
+                <th>Location</th>
+                <th>Distance</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var truck in TruckService.Trucks)
+            {
+                <tr>
+                    <td>@truck.Id</td>
+                    <td>@truck.CreatedAt.ToShortDateString()</td>
+                    <td>@truck.UpdatedAt.ToShortDateString()</td>
+                    <td>@truck.SiteId</td>
+                    <td>@truck.AssetId</td>
+                    <td>@truck.LastPositionTimestamp.ToShortDateString()</td>
+                    <td>@truck.Latitude</td>
+                    <td>@truck.Longitute</td>
+                    <td>@truck.CurrentAddress</td>
+                    <td>
+                        <button class="btn btn-info" @onclick="(() => ShowLocation(truck.AssetId))"><i class="oi oi-location">Location</i></button>
+                    </td>
+                    <td>
+                        <button class="btn btn-info" @onclick="(() => ShowDistance(truck.AssetId))"><i class="oi oi-location"></i>Distance</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await TruckService.GetTrucks();
+    }
+
+    void ShowLocation(decimal assetId)
+    {
+        NavigationManager.NavigateTo($"location/{assetId}");
+    }
+
+    void ShowDistance(decimal assetId)
+    {
+        NavigationManager.NavigateTo($"location/{assetId}");
+    }
+}

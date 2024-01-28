@@ -1,0 +1,48 @@
+﻿@page "/distance"
+@inject ILocationService LocationService    
+@inject NavigationManager NavigationManager
+
+<PageTitle>Trucks Distance</PageTitle>
+
+<h3>Truck Distance Calculator</h3>
+
+<div>
+    <label>Truck Location Latitude:</label>
+    <input @bind="truckLatitude" type="number" step="any" />
+
+    <label>Truck Location Longitude:</label>
+    <input @bind="truckLongitude" type="number" step="any" />
+</div>
+
+<div>
+    <label>Static Location Latitude:</label>
+    <input @bind="staticLatitude" type="number" step="any" />
+
+    <label>Static Location Longitude:</label>
+    <input @bind="staticLongitude" type="number" step="any" />
+</div>
+
+<button @onclick="CalculateDistance">Calculate Distance</button>
+
+<div>
+    <p>Distance: @distance km</p>
+</div>
+
+
+@code {
+    private double truckLatitude;
+    private double truckLongitude;
+
+    private double staticLatitude = 37.7749;
+    private double staticLongitude = -122.4194;
+
+    private double distance;
+
+    private async Task CalculateDistance()
+    {
+        double result = await LocationService.GetDistance(truckLatitude, truckLongitude, staticLatitude, staticLongitude);
+
+        // Set the result to the distance
+        distance = result;
+    }
+}

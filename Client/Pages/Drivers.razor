@@ -1,0 +1,58 @@
+﻿@page "/drivers"
+@inject IDriverService DriverService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Drivers</PageTitle>
+
+<h3>Drivers</h3>
+
+@if (DriverService.Drivers == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>CreatedAt</th>
+                <th>UpdatedAt</th>
+                <th>SiteId</th>
+                <th>DriverId</th>
+                <th>Name</th>
+                <th>EmployeeNumber</th>
+                <th>Location</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var driver in DriverService.Drivers)
+            {
+                <tr>
+                    <td>@driver.Id</td>
+                    <td>@driver.CreatedAt.ToShortDateString()</td>
+                    <td>@driver.UpdatedAt.ToShortDateString()</td>
+                    <td>@driver.SiteId</td>
+                    <td>@driver.DriverId</td>
+                    <td>@driver.Name</td>
+                    <td>@driver.EmployeeNumber</td>
+                    <td>
+                        <button class="btn btn-info" @onclick="(() => ShowLocation(driver.DriverId))"><i class="oi oi-location"></i>Location</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await DriverService.GetDrivers();
+    }
+
+    void ShowLocation(decimal driverId)
+    {
+        NavigationManager.NavigateTo($"location/{driverId}");
+    }
+}
