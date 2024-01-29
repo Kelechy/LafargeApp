@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
@@ -19,6 +19,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Dapper" Version="2.0.78"/>
+    <PackageReference Include="Dapper.SqlBuilder" Version="2.0.78"/>
+    <PackageReference Include="Dapper.Contrib" Version="2.0.78"/>
   </ItemGroup>
 
   <ItemGroup>

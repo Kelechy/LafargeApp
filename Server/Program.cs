@@ -6,6 +6,7 @@ using LafargeApp.Client.Services.LocationService;
 using LafargeApp.Server.Utility;
 using AspNetCoreRateLimit;
 using Microsoft.Extensions.Configuration;
+using Server.SeededData;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,9 +14,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddMemoryCache();
 builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
-//builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection("IpRateLimitPolicies"));
-//builder.Services.Configure<ClientRateLimitOptions>(builder.Configuration.GetSection("ClientRateLimiting"));
-//builder.Services.Configure<ClientRateLimitPolicies>(builder.Configuration.GetSection("ClientRateLimitPolicies"));
 builder.Services.AddInMemoryRateLimiting();  // Corrected line
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -23,6 +21,10 @@ builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(build
 builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 builder.Services.AddScoped<IUtility, Utility>();
 builder.Services.AddScoped<IDistanceCalculation, DistanceCalculation>();
+builder.Services.AddScoped<ISqlConnectionFactory>( c => {
+    return new SqlConnectionFactory(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+builder.Services.AddScoped<SeedData>();
 
 // ...
 
@@ -44,6 +46,18 @@ else
 }
 
 app.UseHttpsRedirection();
+
+try
+{
+    var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<DataContext>();
+    context.Database.Migrate();
+
+    var dataSeeder = scope.ServiceProvider.GetRequiredService<SeedData>();
+    Task.Run(async () => await dataSeeder.Create()).GetAwaiter().GetResult();
+
+}
+catch(Exception ex){app.Logger.LogError(ex, ex.Message);}
 
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
